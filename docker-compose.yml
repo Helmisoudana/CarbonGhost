@@ -1,0 +1,170 @@
+version: "3.9"
+
+
+
+services:
+
+
+  postgres:
+    image: postgres:16
+    container_name: postgres
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+      - ./infra/postgres/init.sql:/docker-entrypoint-initdb.d/init.sql
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER}"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+
+  zookeeper:
+    image: confluentinc/cp-zookeeper:7.6.0
+    container_name: zookeeper
+    restart: unless-stopped
+    environment:
+      ZOOKEEPER_CLIENT_PORT: 2181
+      ZOOKEEPER_TICK_TIME: 2000
+
+  kafka:
+    image: confluentinc/cp-kafka:7.6.0
+    container_name: kafka
+    restart: unless-stopped
+    depends_on:
+      - zookeeper
+    ports:
+      - "9092:9092"
+    environment:
+      KAFKA_BROKER_ID: 1
+      KAFKA_ZOOKEEPER_CONNECT: zookeeper:2181
+      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://kafka:9092
+      KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
+
+  kafka-init:
+    image: confluentinc/cp-kafka:7.6.0
+    container_name: kafka-init
+    depends_on:
+      - kafka
+    volumes:
+      - ./infra/kafka/create-topics.sh:/create-topics.sh
+    entrypoint: ["bash", "/create-topics.sh"]
+    restart: "no"
+
+  mosquitto:
+    image: eclipse-mosquitto:2
+    container_name: mosquitto
+    restart: unless-stopped
+    ports:
+      - "1883:1883"
+      - "9001:9001"
+    volumes:
+      - ./infra/mosquitto/mosquitto.conf:/mosquitto/config/mosquitto.conf
+      - mosquitto_data:/mosquitto/data
+
+
+
+  service-user:
+    build: ./services/service-user
+    container_name: service-user
+    restart: unless-stopped
+    env_file: .env
+    environment:
+      PORT: 8001
+      DATABASE_URL: postgresql://${POSTGRES_USER}:${POSTGRES_PASSWORD}@postgres:5432/user_db
+    ports:
+      - "8001:8001"
+    depends_on:
+      postgres:
+        condition: service_healthy
+
+  service-carbone:
+    build: ./services/service-carbone
+    container_name: service-carbone
+    restart: unless-stopped
+    env_file: .env
+    environment:
+      PORT: 8002
+      DATABASE_URL: postgresql://${POSTGRES_USER}:${POSTGRES_PASSWORD}@postgres:5432/carbone_db
+      KAFKA_BROKER: kafka:9092
+    ports:
+      - "8002:8002"
+    depends_on:
+      postgres:
+        condition: service_healthy
+      kafka:
+        condition: service_started
+
+  service-mesures:
+    build: ./services/service-mesures
+    container_name: service-mesures
+    restart: unless-stopped
+    env_file: .env
+    environment:
+      PORT: 8003
+      DATABASE_URL: postgresql://${POSTGRES_USER}:${POSTGRES_PASSWORD}@postgres:5432/mesures_db
+      KAFKA_BROKER: kafka:9092
+      MQTT_BROKER: mosquitto
+      MQTT_PORT: 1883
+    ports:
+      - "8003:8003"
+    depends_on:
+      postgres:
+        condition: service_healthy
+      kafka:
+        condition: service_started
+      mosquitto:
+        condition: service_started
+
+  service-ia:
+    build: ./services/service-ia
+    container_name: service-ia
+    restart: unless-stopped
+    env_file: .env
+    environment:
+      PORT: 8004
+      DATABASE_URL: postgresql://${POSTGRES_USER}:${POSTGRES_PASSWORD}@postgres:5432/ia_db
+      KAFKA_BROKER: kafka:9092
+    ports:
+      - "8004:8004"
+    depends_on:
+      postgres:
+        condition: service_healthy
+      kafka:
+        condition: service_started
+
+  service-assistant:
+    build: ./services/service-assistant
+    container_name: service-assistant
+    restart: unless-stopped
+    env_file: .env
+    environment:
+      PORT: 8005
+      DATABASE_URL: postgresql://${POSTGRES_USER}:${POSTGRES_PASSWORD}@postgres:5432/assistant_db
+    ports:
+      - "8005:8005"
+    depends_on:
+      postgres:
+        condition: service_healthy
+
+  service-factory:
+    build: ./services/service-factory
+    container_name: service-factory
+    restart: unless-stopped
+    env_file: .env
+    environment:
+      PORT: 8006
+      DATABASE_URL: postgresql://${POSTGRES_USER}:${POSTGRES_PASSWORD}@postgres:5432/factory_db
+    ports:
+      - "8006:8006"
+    depends_on:
+      postgres:
+        condition: service_healthy
+
+volumes:
+  postgres_data:
+  mosquitto_data:

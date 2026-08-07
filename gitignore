@@ -1,0 +1,45 @@
+# --- Secrets / config locale --------------------------------------------
+.env
+*.env
+!.env.example
+
+# --- Python -------------------------------------------------------------
+__pycache__/
+*.py[cod]
+*.egg-info/
+.eggs/
+*.egg
+venv/
+.venv/
+env/
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+htmlcov/
+.coverage
+*.cover
+
+# --- Node / Angular (dashboard) ---------------------------------------
+node_modules/
+dist/
+.angular/
+
+# --- Docker ---------------------------------------------------------------
+*.log
+
+# --- IDE -------------------------------------------------------------------
+.vscode/
+.idea/
+*.swp
+
+# --- OS ---------------------------------------------------------------------
+.DS_Store
+Thumbs.db
+
+# --- MLOps ---------------------------------------------------------------
+mlruns/
+*.ipynb_checkpoints/
+
+# --- Data persistée en local -------------------------------------------
+infra/postgres/data/
+infra/mosquitto/data/

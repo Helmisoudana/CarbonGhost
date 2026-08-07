@@ -2,7 +2,7 @@ from pydantic import BaseModel
 from datetime import datetime
 
 class LogEntry(BaseModel):
-    timesyamp:datetime
+    timestamp:datetime
     service_name:str
     level:str
     message:str

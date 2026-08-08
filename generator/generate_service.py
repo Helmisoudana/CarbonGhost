@@ -9,7 +9,7 @@ Principe :
     - container.py regroupe tout ce qui est commun à un service : création de
       l'app FastAPI, middlewares, exception handlers, health check, et
       inclusion du router. C'est le seul fichier "d'assemblage".
-    - domain/exceptions/base_exceptions.py est généré à l'identique dans
+    - domain/exceptions/exception.py est généré à l'identique dans
       chaque service : ce sont les exceptions communes que tous les services
       doivent utiliser (NotFoundException, ValidationException, etc.).
 
@@ -37,7 +37,7 @@ if __name__ == "__main__":
     uvicorn.run("main:app", host="0.0.0.0", port=int(os.getenv("PORT", 8000)), reload=True)
 '''
 
-BASE_EXCEPTIONS_PY = '''"""
+EXCEPTIONS_PY = '''"""
 Exceptions de base communes à TOUS les services.
 Ne pas mettre de logique spécifique à un service ici.
 """
@@ -97,7 +97,8 @@ def generate(name: str, port: int, with_mqtt: bool):
     w(base / "api" / "__init__.py")
 
     # --- exceptions de base, identiques dans tous les services ------------
-    w(base / "domain" / "exceptions" / "base_exceptions.py", BASE_EXCEPTIONS_PY)
+    # Fichier : domain/exceptions/exception.py (et non base_exceptions.py)
+    w(base / "domain" / "exceptions" / "exception.py", EXCEPTIONS_PY)
 
     # --- main.py : FIXE, identique partout, ne jamais éditer ---------------
     w(base / "main.py", MAIN_PY)
@@ -115,7 +116,7 @@ from fastapi import FastAPI, Request
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse
 
-from domain.exceptions.base_exceptions import (
+from domain.exceptions.exception import (
     DomainException,
     NotFoundException,
     ValidationException,
@@ -182,7 +183,7 @@ app.include_router({name}_router)
 router = APIRouter(prefix="/{name}", tags=["{name}"])
 
 # TODO: brancher les routes sur les use cases de application/use_cases/
-# En cas d'erreur métier, lever une exception de domain/exceptions/base_exceptions.py
+# En cas d'erreur métier, lever une exception de domain/exceptions/exception.py
 # (NotFoundException, ValidationException, ...), le container s'occupe du reste.
 ''')
 

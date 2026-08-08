@@ -22,7 +22,7 @@ create_topic() {
     --topic "$name" \
     --partitions "$partitions" \
     --replication-factor "$replication"
-  echo "✅ topic $name créé (partitions=$partitions, replication=$replication)"
+  echo " topic $name créé (partitions=$partitions, replication=$replication)"
 }
 
 # Événements bruts remontés par service-mesures depuis MQTT

@@ -7,7 +7,7 @@ TOPIC = "measures.raw"
 
 class KafkaMeasurementPublisher(IMeasurementPublisher):
     def __init__(self,broker_address:str):
-        self.producer=Producer({"bootstrap.services" : broker_address})
+        self.producer=Producer({"bootstrap.servers" : broker_address})
 
     def publish(self , mesure:SensorMeasurment)-> None:
         payload =json.dumps(mesure.model_dump(mode="json")).encode("utf-8")

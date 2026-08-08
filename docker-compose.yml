@@ -100,7 +100,9 @@ services:
         condition: service_started
 
   service-mesures:
-    build: ./services/service-mesures
+    build:
+      context: .
+      dockerfile: services/service-mesures/Dockerfile
     container_name: service-mesures
     restart: unless-stopped
     env_file: .env

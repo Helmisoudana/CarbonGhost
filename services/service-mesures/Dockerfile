@@ -1,7 +1,8 @@
 FROM python:3.12-slim
 WORKDIR /app
-COPY requirements.txt .
+COPY services/service-mesures/requirements.txt .
 RUN pip install --no-cache-dir -r requirements.txt
-COPY . .
+COPY services/service-mesures/ .
+COPY shared/ ./shared/
 EXPOSE 8003
 CMD ["python", "main.py"]

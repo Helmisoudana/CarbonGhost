@@ -2,3 +2,6 @@ fastapi
 uvicorn[standard]
 pydantic
 paho-mqtt
+sqlalchemy
+psycopg2-binary
+confluent-kafka

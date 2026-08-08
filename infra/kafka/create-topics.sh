@@ -26,7 +26,7 @@ create_topic() {
 }
 
 # Événements bruts remontés par service-mesures depuis MQTT
-create_topic "mesures.raw" 3 1
+create_topic "measures.raw" 3 1
 
 # Événements carbone calculés, consommés par service-carbone -> service-ia
 create_topic "carbon.events" 3 1

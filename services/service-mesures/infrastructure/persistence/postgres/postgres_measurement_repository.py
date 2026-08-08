@@ -1,7 +1,7 @@
 from sqlalchemy import select,delete
 from sqlalchemy.orm import Session
 
-from domain.entities.measurement import Measurment
+from domain.entities.measurement import Measurement
 from domain.ports.events.i_measurement_publisher import IMeasurementPublisher
 from domain.ports.repositories.i_measurement_repository import IMeasurementRepository
 from shared.contracts.sensor_measurement import SensorMeasurment
@@ -12,7 +12,7 @@ class PostgresMeasurementRepository(IMeasurementRepository):
     def __init__(self, session: Session):
         self.session = session
 
-    def save(self , measurement: Measurment ) -> None:
+    def save(self , measurement: Measurement ) -> None:
         data = measurement.data
         model = MeasurementModel(
             id=measurement.id,
@@ -30,11 +30,11 @@ class PostgresMeasurementRepository(IMeasurementRepository):
         self.session.add(model)
         self.session.commit()
 
-    def find_by_id(self, measurement_id: str) ->Measurment | None:
+    def find_by_id(self, measurement_id: str) ->Measurement | None:
         model=self.session.get(MeasurementModel , measurement_id)
         return self._to_entity(model) if model else None
 
-    def find_by_machine(self, machine_id : str) -> list[Measurment] | None :
+    def find_by_machine(self, machine_id : str) -> list[Measurement] | None :
         stmt =(
             select(MeasurementModel)
             .where(MeasurementModel.machine_id == machine_id)
@@ -45,14 +45,14 @@ class PostgresMeasurementRepository(IMeasurementRepository):
 
 
         
-    def delete_by_machine_id(self, machine_id: str) -> int:
+    def delete_by_machine(self, machine_id: str) -> int:
         stmt = delete(MeasurementModel).where(MeasurementModel.machine_id == machine_id)
         result = self.session.execute(stmt)
         self.session.commit()
         return result.rowcount
 
 
-    def _to_entity(self, model: MeasurementModel) -> Measurment:
+    def _to_entity(self, model: MeasurementModel) -> Measurement:
         mesure = SensorMeasurment(
             machine_id=model.machine_id,
             device_id=model.device_id,
@@ -64,7 +64,7 @@ class PostgresMeasurementRepository(IMeasurementRepository):
             debit=model.debit,
             production_count=model.production_count,
         )
-        return Measurment(id=model.id, registered_at=model.registered_at, data=mesure)
+        return Measurement(id=model.id, registered_at=model.registered_at, data=mesure)
 
    
 

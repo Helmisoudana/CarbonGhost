@@ -5,7 +5,7 @@ from domain.entities.measurement import Measurement
 class IMeasurementRepository(ABC):
      
     @abstractmethod
-    def save(self, measurement_id : str) -> None:
+    def save(self, mesurment : Measurement) -> None:
         ...
 
     @abstractmethod

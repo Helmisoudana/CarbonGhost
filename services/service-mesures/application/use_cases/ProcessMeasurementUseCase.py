@@ -8,7 +8,7 @@ class ProcessMeasurementUseCase:
         self.repository = repository
         self.publisher = publisher
     def execute(self, mesure :SensorMeasurment):
-        measurement =Measurement.from_sensor_measurement(mesure)
+        measurement = Measurement.from_dict(mesure.model_dump())
         self.repository.save(measurement)
         self.publisher.publish(mesure)
         return measurement

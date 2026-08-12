@@ -1,24 +1,26 @@
-"""
-Exceptions de base communes à TOUS les services.
-Ne pas mettre de logique spécifique à un service ici.
-"""
-
-
 class DomainException(Exception):
     """Exception racine du domaine. Toute exception métier en hérite."""
+    pass
 
 
-class NotFoundException(DomainException):
-    """Ressource introuvable (-> 404)."""
+class UserNotFoundException(DomainException):
+    """user introuvable (-> 404)."""
+    def __init__(self, msg: str= "user not found"):
+        super().__init__(msg)
 
 
-class ValidationException(DomainException):
-    """Donnée invalide (-> 422)."""
+class UserAlreadyExistsException(DomainException):
+    """when an email or badged_id already exists in the database (-> 409)."""
+    def __init__(self, msg: str= "user already exists"):
+        super().__init__(msg)
 
 
-class ConflictException(DomainException):
-    """Conflit d'état, ex: ressource déjà existante (-> 409)."""
+class AuthenticationFailedException(DomainException):
+    """invalid credentials (-> 401)."""
+    def __init__(self, msg: str= "invalid credentials"):
+        super().__init__(msg)
 
-
-class UnauthorizedException(DomainException):
-    """Accès non autorisé (-> 401)."""
+class UserInactiveException(DomainException):
+    """user is inactive and cannot perform actions (-> 403)."""
+    def __init__(self, msg: str= "User account is inactive"):
+        super().__init__(msg)

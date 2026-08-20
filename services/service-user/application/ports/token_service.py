@@ -1,6 +1,6 @@
 from abc import ABC, abstractmethod
 
-class IHashingService(ABC):
+class ITokenService(ABC):
     """port d'interface pour la gestion des tokens de sécurité."""
     @abstractmethod
     def generate_token(self, data: dict) -> str:

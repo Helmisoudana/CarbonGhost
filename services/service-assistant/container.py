@@ -2,8 +2,8 @@ from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
 
 from config import settings
-from infrastructure.persistence.postgres.carbon_event_repository import CarbonEventRepository
-from infrastructure.llm.groq_client import GroqClient
+from infrastructure.adapters.llm.groq_client import GroqAssistantClient
+from infrastructure.adapters.persistence.postgres.carbon_event_repository import PostgresCarbonEventRepository
 from application.use_cases.ask_assistant_use_case import AskAssistantUseCase
 from application.use_cases.generate_report_use_case import GenerateReportUseCase
 
@@ -16,7 +16,7 @@ class Container:
     def __init__(self):
 
         # --- LLM ---
-        self.llm = GroqClient()
+        self.llm = GroqAssistantClient()
 
         # --- Base de données ---
         self.engine = create_engine(settings.database_url)
@@ -24,7 +24,7 @@ class Container:
         self.db_session = session_factory()
 
         # --- Repository ---
-        self.repository = CarbonEventRepository(self.db_session)
+        self.repository = PostgresCarbonEventRepository(self.db_session)
 
         # --- Use Cases ---
         self.ask_use_case = AskAssistantUseCase(self.repository, self.llm)

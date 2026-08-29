@@ -8,6 +8,11 @@ class UnsafeQuestionException(DomainException):
     pass
 
 
+class UnsafeResponseException(DomainException):
+    """Réponse du LLM refusée par la politique de sécurité."""
+    pass
+
+
 class EventNotFoundException(DomainException):
     """Aucun événement trouvé."""
     pass

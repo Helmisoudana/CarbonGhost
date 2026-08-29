@@ -3,7 +3,7 @@ from groq import AsyncGroq
 from config import settings
 
 
-class GroqClient:
+class GroqAssistantClient:
 
     def __init__(self):
         self.client = AsyncGroq(

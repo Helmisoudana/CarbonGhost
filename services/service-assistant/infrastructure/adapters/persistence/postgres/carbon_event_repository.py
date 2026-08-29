@@ -10,7 +10,7 @@ from domain.ports.repositories.i_carbon_event_repository import (
 )
 
 
-class CarbonEventRepository(ICarbonEventRepository):
+class PostgresCarbonEventRepository(ICarbonEventRepository):
 
     def __init__(self, db: Session):
         self.db = db
@@ -80,3 +80,16 @@ class CarbonEventRepository(ICarbonEventRepository):
             confidence=row.confidence,
             recommendation=row.recommendation,
         )
+    def get_context_for_llm(self, machine_id: str) -> dict:
+        events = self.get_events_by_machine(machine_id, limit=1)
+        if not events:
+            return {}
+        latest = events[0]
+        return {
+            "machine_id": latest.machine_id,
+            "expected_energy": latest.expected_energy_kwh,
+            "actual_energy": latest.actual_energy_kwh,
+            "deviation_pct": latest.surconsommation_pct,
+            "probable_cause": latest.probable_cause,
+            "recommendation": latest.recommendation,
+        }

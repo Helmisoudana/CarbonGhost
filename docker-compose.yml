@@ -83,7 +83,9 @@ services:
         condition: service_healthy
 
   service-carbone:
-    build: ./services/service-carbone
+    build:
+      context: .
+      dockerfile: services/service-carbone/Dockerfile
     container_name: service-carbone
     restart: unless-stopped
     env_file: .env

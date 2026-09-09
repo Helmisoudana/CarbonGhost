@@ -7,6 +7,10 @@ from fastapi.responses import JSONResponse
 
 from api.rest.user_router import router as user_router
 
+from dotenv import load_dotenv
+
+load_dotenv()   # Charger les variables d'environnement à partir du fichier .env
+
 SERVICE_NAME = "user"
 
 app = FastAPI(title="service-user")

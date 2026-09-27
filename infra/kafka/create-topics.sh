@@ -1,14 +1,9 @@
-#!/bin/bash
-# create-topics.sh
-# Crée les topics Kafka nécessaires au système. À lancer une fois que
-# le conteneur Kafka est up (docker-compose exec kafka bash puis lancer
-# ce script, ou via un conteneur "kafka-init" dédié dans docker-compose).
-
+﻿#!/bin/bash
 set -e
 
 BROKER="kafka:9092"
 
-echo "Attente que Kafka soit prêt..."
+echo "Attente que Kafka soit pret..."
 until kafka-topics --bootstrap-server "$BROKER" --list > /dev/null 2>&1; do
   sleep 2
 done
@@ -22,16 +17,13 @@ create_topic() {
     --topic "$name" \
     --partitions "$partitions" \
     --replication-factor "$replication"
-  echo " topic $name créé (partitions=$partitions, replication=$replication)"
+  echo " topic $name cree (partitions=$partitions, replication=$replication)"
 }
 
-# Événements bruts remontés par service-mesures depuis MQTT
 create_topic "measures.raw" 3 1
-
-# Événements carbone calculés, consommés par service-carbone -> service-ia
 create_topic "carbon.events" 3 1
-
-# Alertes/anomalies détectées par service-ia
 create_topic "ia.anomalies" 3 1
+create_topic "assistant.requests" 3 1
+create_topic "assistant.explanations" 3 1
 
-echo "Tous les topics sont prêts."
+echo "Tous les topics sont prets."

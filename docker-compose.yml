@@ -140,18 +140,23 @@ services:
         condition: service_started
 
   service-assistant:
-    build: ./services/service-assistant
+    build:
+      context: .
+      dockerfile: services/service-assistant/Dockerfile
     container_name: service-assistant
     restart: unless-stopped
     env_file: .env
     environment:
       PORT: 8005
       DATABASE_URL: postgresql://${POSTGRES_USER}:${POSTGRES_PASSWORD}@postgres:5432/assistant_db
+      KAFKA_BROKER: kafka:9092
     ports:
       - "8005:8005"
     depends_on:
       postgres:
         condition: service_healthy
+      kafka:
+        condition: service_started
 
   service-factory:
     build: ./services/service-factory

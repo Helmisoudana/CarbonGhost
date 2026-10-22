@@ -6,7 +6,6 @@ from uuid import uuid4
 
 @dataclass
 class Anomaly:
-    """Anomalie détectée sur une mesure capteur d une machine."""
 
     machine_id: str
     timestamp: datetime

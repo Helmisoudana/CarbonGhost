@@ -33,5 +33,7 @@ create_topic "carbon.events" 3 1
 
 # Alertes/anomalies dÃ©tectÃ©es par service-ia
 create_topic "ia.anomalies" 3 1
+create_topic "assistant.requests" 3 1
+create_topic "assistant.explanations" 3 1
 
 echo "Tous les topics sont prÃªts."

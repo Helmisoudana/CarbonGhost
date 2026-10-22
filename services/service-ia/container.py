@@ -1,7 +1,4 @@
-"""
-Container du service IA : app FastAPI, exception handlers, health check,
-router et câblage des dépendances. main.py ne fait que le lancer.
-"""
+
 import os
 from contextlib import contextmanager
 

@@ -133,6 +133,7 @@ def get_carbon_event_repository():
     session = SessionLocal()
     try:
         yield PostgresCarbonEventRepository(session)
+        yioeld mo
     finally:
         session.close()
 

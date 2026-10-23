@@ -1,9 +1,3 @@
-"""
-Container du service user.
-Regroupe tout ce qui est commun : app FastAPI, middlewares, exception
-handlers, health check, et inclusion des routers. C'est le seul fichier
-qui assemble les dépendances : main.py ne fait que le lancer.
-"""
 
 from fastapi import FastAPI, Request
 from fastapi.middleware.cors import CORSMiddleware
